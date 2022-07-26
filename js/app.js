@@ -57,4 +57,75 @@ function keydown(e) {
     if(e.keyCode == 37) {
         keys.left = true;
     }
-   
+    // 37 is the code for the up arrow key
+    if(e.keyCode == 38) {
+        if(player.jump == false) {
+            player.y_v = -10;
+        }
+    }
+    // 39 is the code for the right arrow key
+    if(e.keyCode == 39) {
+        keys.right = true;
+    }
+}
+// This function is called when the pressed key is released
+function keyup(e) {
+    if(e.keyCode == 37) {
+        keys.left = false;
+    }
+    if(e.keyCode == 38) {
+        if(player.y_v < -2) {
+        player.y_v = -3;
+        }
+    }
+    if(e.keyCode == 39) {
+        keys.right = false;
+    }
+} 
+function loop() {
+    // If the player is not jumping apply the effect of frictiom
+    if(player.jump == false) {
+        player.x_v *= friction;
+    } else {
+        // If the player is in the air then apply the effect of gravity
+        player.y_v += gravity;
+    }
+    player.jump = true;
+    // If the left key is pressed increase the relevant horizontal velocity
+    if(keys.left) {
+        player.x_v = -2.5;
+    }
+    if(keys.right) {
+        player.x_v = 2.5;
+    }
+    // Updating the y and x coordinates of the player
+    player.y += player.y_v;
+    player.x += player.x_v;
+    // A simple code that checks for collions with the platform
+    let i = -1;
+    if(platforms[0].x < player.x && player.x < platforms[0].x + platforms[0].width &&
+    platforms[0].y < player.y && player.y < platforms[0].y + platforms[0].height){
+        i = 0;
+    }
+    if(platforms[1].x < player.x && player.x < platforms[1].x + platforms[1].width &&
+    platforms[1].y < player.y && player.y < platforms[1].y + platforms[1].height){
+        i = 1;
+    }
+    if (i > -1){
+        player.jump = false;
+        player.y = platforms[i].y;    
+    }
+    // Rendering the canvas, the player and the platforms
+    rendercanvas();
+    renderplayer();
+    renderplat();
+}
+canvas=document.getElementById("canvas");
+ctx=canvas.getContext("2d");
+ctx.canvas.height = 270;
+ctx.canvas.width = 270;
+createplat();
+// Adding the event listeners
+document.addEventListener("keydown",keydown);
+document.addEventListener("keyup",keyup);
+setInterval(loop,22);
